@@ -27,8 +27,7 @@
             "phaser_ensembler",
             "clustalw",
             "findmyseq",
-            "mrparse",
-            "mrparse_simple"
+            "mrparse"
         ],
         "data_entry": [
             "import_merged",
@@ -54,7 +53,8 @@
             "matthews",
             "molrep_selfrot",
             "AUSPEX",
-            "xia2_multiplex"
+            "xia2_multiplex",
+            "xia2_ssx_reduce"
         ],
         "demo": [
             "pdbset",
@@ -69,7 +69,8 @@
             "SyncToDjango",
             "TestObsConversions",
             "nautilus",
-            "MakeProjectsAndDoLigandPipeline"
+            "MakeProjectsAndDoLigandPipeline",
+            "mrparse_simple"
         ],
         "export": [
             "adding_stats_to_mmcif_i2",
@@ -86,6 +87,7 @@
             "cphasematch",
             "ctruncate",
             "scaleit",
+            "cpatterson",
             "density_calculator",
             "freerflag",
             "matthews"
@@ -154,7 +156,8 @@
             "pdb_redo_api",
             "sheetbend",
             "zanuda",
-            "phaser_rnp_pipeline"
+            "phaser_rnp_pipeline",
+            "servalcat_xtal_pipe"
         ],
         "test": [
             "demo_copycell",
@@ -218,9 +221,11 @@
             "baverage",
             "buccaneer_mr",
             "cmapcoeff",
+            "cpatterson",
             "import_mosflm",
             "prosmart",
             "refmac",
+            "servalcat_xtal",
             "pdb_extract_wrapper",
             "reindex_minimtz"
         ]
@@ -230,6 +235,11 @@
             "class": "core.CCP4PerformanceDataCAtomCountPerformance",
             "clsModule": "core.CCP4PerformanceData",
             "clsName": "CAtomCountPerformance"
+        },
+        "CDataReductionCCPerformance": {
+            "class": "core.CCP4PerformanceDataCDataReductionCCPerformance",
+            "clsModule": "core.CCP4PerformanceData",
+            "clsName": "CDataReductionCCPerformance"
         },
         "CDataReductionPerformance": {
             "class": "core.CCP4PerformanceDataCDataReductionPerformance",
@@ -806,6 +816,15 @@
                 "modes": [
                     "Running"
                 ]
+            }
+        },
+        "cpatterson": {
+            "0.0.0": {
+                "MAINTAINER": "Nobody",
+                "class": "wrappers.cpatterson.script.cpatterson_reportcpatterson_report",
+                "clsModule": "wrappers.cpatterson.script.cpatterson_report",
+                "clsName": "cpatterson_report",
+                "modes": []
             }
         },
         "cphasematch": {
@@ -1564,6 +1583,15 @@
                 "modes": []
             }
         },
+        "prosmart": {
+            "0.0.0": {
+                "MAINTAINER": "Nobody",
+                "class": "wrappers.prosmart.script.prosmart_reportprosmart_report",
+                "clsModule": "wrappers.prosmart.script.prosmart_report",
+                "clsName": "prosmart_report",
+                "modes": []
+            }
+        },
         "prosmart_refmac": {
             "0.0.0": {
                 "MAINTAINER": "Nobody",
@@ -1633,6 +1661,28 @@
                 "clsModule": "wrappers.sculptor.script.sculptor_report",
                 "clsName": "sculptor_report",
                 "modes": []
+            }
+        },
+        "servalcat_xtal": {
+            "0.0.0": {
+                "MAINTAINER": "Nobody",
+                "class": "wrappers.servalcat_xtal.script.servalcat_xtal_reportservalcat_xtal_report",
+                "clsModule": "wrappers.servalcat_xtal.script.servalcat_xtal_report",
+                "clsName": "servalcat_xtal_report",
+                "modes": [
+                    "Running"
+                ]
+            }
+        },
+        "servalcat_xtal_pipe": {
+            "0.0.0": {
+                "MAINTAINER": "Nobody",
+                "class": "pipelines.servalcat_xtal_pipe.script.servalcat_xtal_pipe_reportservalcat_xtal_pipe_report",
+                "clsModule": "pipelines.servalcat_xtal_pipe.script.servalcat_xtal_pipe_report",
+                "clsName": "servalcat_xtal_pipe_report",
+                "modes": [
+                    "Running"
+                ]
             }
         },
         "sheetbend": {
@@ -1732,6 +1782,17 @@
                 "class": "pipelines.import_xia2.wrappers.xia2_run.script.xia2_run_reportxia2_run_report",
                 "clsModule": "pipelines.import_xia2.wrappers.xia2_run.script.xia2_run_report",
                 "clsName": "xia2_run_report",
+                "modes": [
+                    "Running"
+                ]
+            }
+        },
+        "xia2_ssx_reduce": {
+            "0.0.0": {
+                "MAINTAINER": "Nobody",
+                "class": "wrappers.xia2_ssx_reduce.script.xia2_ssx_reduce_reportxia2_ssx_reduce_report",
+                "clsModule": "wrappers.xia2_ssx_reduce.script.xia2_ssx_reduce_report",
+                "clsName": "xia2_ssx_reduce_report",
                 "modes": [
                     "Running"
                 ]
@@ -2444,10 +2505,23 @@
                 "DESCRIPTION": null,
                 "INTERRUPTLABEL": null,
                 "MAINTAINER": "Nobody",
-                "TASKTITLE": "Find waters with coot",
+                "TASKTITLE": "Find waters with coot api",
                 "class": "pipelines.prosmart_refmac.wrappers.coot_find_waters.script.coot_find_waterscoot_find_waters",
                 "clsModule": "pipelines.prosmart_refmac.wrappers.coot_find_waters.script.coot_find_waters",
                 "clsName": "coot_find_waters",
+                "internal": false,
+                "subTasks": []
+            }
+        },
+        "coot_find_waters_old": {
+            "0.0": {
+                "DESCRIPTION": null,
+                "INTERRUPTLABEL": null,
+                "MAINTAINER": "Nobody",
+                "TASKTITLE": "Find waters with coot",
+                "class": null,
+                "clsModule": "pipelines.prosmart_refmac.wrappers.coot_find_waters.script.coot_find_waters",
+                "clsName": "coot_find_waters_old",
                 "internal": false,
                 "subTasks": []
             }
@@ -2539,6 +2613,19 @@
                 "class": "pipelines.prosmart_refmac.wrappers.coot_stepped_refine.script.coot_stepped_refinecoot_stepped_refine",
                 "clsModule": "pipelines.prosmart_refmac.wrappers.coot_stepped_refine.script.coot_stepped_refine",
                 "clsName": "coot_stepped_refine",
+                "internal": false,
+                "subTasks": []
+            }
+        },
+        "cpatterson": {
+            "0.0": {
+                "DESCRIPTION": null,
+                "INTERRUPTLABEL": null,
+                "MAINTAINER": "stuart.mcnicholas@york.ac.uk",
+                "TASKTITLE": "Prepare map coefficients",
+                "class": "wrappers.cpatterson.script.cpattersoncpatterson",
+                "clsModule": "wrappers.cpatterson.script.cpatterson",
+                "clsName": "cpatterson",
                 "internal": false,
                 "subTasks": []
             }
@@ -2831,7 +2918,7 @@
         },
         "dui": {
             "0.1": {
-                "DESCRIPTION": "Launch DIALS User Interface (DUI) and capture output",
+                "DESCRIPTION": "Launch DIALS User Interface (DUI2) and capture output",
                 "INTERRUPTLABEL": null,
                 "MAINTAINER": "kyle.stevenson@stfc.ac.uk",
                 "TASKTITLE": "Integrate images - DIALS",
@@ -3847,6 +3934,36 @@
                 "subTasks": []
             }
         },
+        "servalcat_xtal": {
+            "0.0": {
+                "DESCRIPTION": null,
+                "INTERRUPTLABEL": null,
+                "MAINTAINER": "Nobody",
+                "TASKTITLE": "Refinement (servalcat)",
+                "class": "wrappers.servalcat_xtal.script.servalcat_xtalservalcat_xtal",
+                "clsModule": "wrappers.servalcat_xtal.script.servalcat_xtal",
+                "clsName": "servalcat_xtal",
+                "internal": false,
+                "subTasks": []
+            }
+        },
+        "servalcat_xtal_pipe": {
+            "0.0": {
+                "DESCRIPTION": null,
+                "INTERRUPTLABEL": null,
+                "MAINTAINER": "Nobody",
+                "TASKTITLE": "Refinement - Servalcat (experimental)",
+                "class": "pipelines.servalcat_xtal_pipe.script.servalcat_xtal_pipeservalcat_xtal_pipe",
+                "clsModule": "pipelines.servalcat_xtal_pipe.script.servalcat_xtal_pipe",
+                "clsName": "servalcat_xtal_pipe",
+                "internal": false,
+                "subTasks": [
+                    "Platonyzer",
+                    "prosmart",
+                    "servalcat"
+                ]
+            }
+        },
         "sheetbend": {
             "0.1": {
                 "DESCRIPTION": null,
@@ -3955,7 +4072,7 @@
             "null": {
                 "DESCRIPTION": null,
                 "INTERRUPTLABEL": null,
-                "MAINTAINER": "ak2535@york.ac.uk",
+                "MAINTAINER": "jon.agirre@york.ac.uk",
                 "TASKTITLE": null,
                 "class": "wrappers.validate_protein.script.validate_proteinvalidate_protein",
                 "clsModule": "wrappers.validate_protein.script.validate_protein",
@@ -4081,6 +4198,19 @@
                 "subTasks": []
             }
         },
+        "xia2_ssx_reduce": {
+            "0.0": {
+                "DESCRIPTION": null,
+                "INTERRUPTLABEL": null,
+                "MAINTAINER": "martin.maly@soton.ac.uk",
+                "TASKTITLE": "Reduction of serial datasets using xia2.ssx_reduce",
+                "class": "wrappers.xia2_ssx_reduce.script.xia2_ssx_reduceCxia2_ssx_reduce",
+                "clsModule": "wrappers.xia2_ssx_reduce.script.xia2_ssx_reduce",
+                "clsName": "Cxia2_ssx_reduce",
+                "internal": false,
+                "subTasks": []
+            }
+        },
         "xia2_xds": {
             "0.0": {
                 "DESCRIPTION": null,
@@ -4162,6 +4292,7 @@
         "convert2mtz": "qticons/convert2mtz.png",
         "coordinate_selector": "qticons/coordinate_selector.png",
         "coot_find_waters": "qticons/coot_find_waters.png",
+        "coot_find_waters_old": "qticons/ccp4.png",
         "coot_fit_residues": "qticons/ccp4.png",
         "coot_gtk3_rebuild": "qticons/ccp4.png",
         "coot_headless_script_lines": "qticons/ccp4.png",
@@ -4169,6 +4300,7 @@
         "coot_rsr_morph": "qticons/coot_rsr_morph.png",
         "coot_script_lines": "qticons/coot_script_lines.png",
         "coot_stepped_refine": "qticons/ccp4.png",
+        "cpatterson": "qticons/cpatterson.png",
         "cphasematch": "qticons/cphasematch.png",
         "crank2": "qticons/crank2.png",
         "crank2_comb_phdmmb": "qticons/ccp4.png",
@@ -4275,6 +4407,8 @@
         "scaleit": "qticons/scaleit.png",
         "scalepack2mtz": "qticons/ccp4.png",
         "sculptor": "qticons/sculptor.png",
+        "servalcat_xtal": "qticons/ccp4.png",
+        "servalcat_xtal_pipe": "qticons/ccp4.png",
         "sheetbend": "qticons/ccp4.png",
         "shelx": "qticons/shelx.png",
         "shelxeMR": "qticons/shelxeMR.png",
@@ -4290,6 +4424,7 @@
         "x2mtz": "qticons/ccp4.png",
         "xia2_dials": "qticons/xia2_dials.png",
         "xia2_multiplex": "qticons/xia2_multiplex.png",
+        "xia2_ssx_reduce": "qticons/xia2_ssx_reduce.png",
         "xia2_xds": "qticons/xia2_xds.png",
         "zanuda": "qticons/zanuda.png"
     },
@@ -4519,6 +4654,16 @@
             "clsModule": "core.CCP4PerformanceData",
             "clsName": "CAtomCountPerformance"
         },
+        "servalcat_xtal": {
+            "class": "core.CCP4PerformanceDataCRefinementPerformance",
+            "clsModule": "core.CCP4PerformanceData",
+            "clsName": "CRefinementPerformance"
+        },
+        "servalcat_xtal_pipe": {
+            "class": "core.CCP4PerformanceDataCRefinementPerformance",
+            "clsModule": "core.CCP4PerformanceData",
+            "clsName": "CRefinementPerformance"
+        },
         "shelx": {
             "class": "core.CCP4PerformanceDataCExpPhasPerformance",
             "clsModule": "core.CCP4PerformanceData",
@@ -4553,6 +4698,11 @@
             "class": "core.CCP4PerformanceDataCDataReductionPerformance",
             "clsModule": "core.CCP4PerformanceData",
             "clsName": "CDataReductionPerformance"
+        },
+        "xia2_ssx_reduce": {
+            "class": "core.CCP4PerformanceDataCDataReductionCCPerformance",
+            "clsModule": "core.CCP4PerformanceData",
+            "clsName": "CDataReductionCCPerformance"
         },
         "xia2_xds": {
             "class": "core.CCP4PerformanceDataCDataReductionPerformance",
@@ -5277,6 +5427,20 @@
                 "clsName": "Ccoot_stepped_refine",
                 "shortTitle": "Coot stepped refinement",
                 "taskName": "coot_stepped_refine",
+                "taskVersion": 0.1
+            }
+        },
+        "cpatterson": {
+            "0.0.0": {
+                "DESCRIPTION": "Calculate Patterson map (cpatterson)",
+                "MAINTAINER": "Nobody",
+                "RANK": null,
+                "TASKTITLE": "Calculate Patterson map",
+                "class": "wrappers.cpatterson.script.cpatterson_guicpatterson_gui",
+                "clsModule": "wrappers.cpatterson.script.cpatterson_gui",
+                "clsName": "cpatterson_gui",
+                "shortTitle": "Calculate Patterson map",
+                "taskName": "cpatterson",
                 "taskVersion": 0.1
             }
         },
@@ -6206,14 +6370,14 @@
         },
         "pointless_reindexToMatch": {
             "0.0.0": {
-                "DESCRIPTION": "Reindex: match to reference data/coordinates and/or change space group of reflections, FreeR; or analyse symmetry (Pointless)",
+                "DESCRIPTION": "Reindex: match to reference data/coordinates; change space group; analyse symmetry; or expand to P1 (Pointless)",
                 "MAINTAINER": "Nobody",
                 "RANK": 2,
-                "TASKTITLE": "Reindex or  change spacegroup",
+                "TASKTITLE": "Reindex reflections or change spacegroup",
                 "class": "wrappers.pointless_reindexToMatch.script.pointless_reindexToMatch_guipointless_reindexToMatch_gui",
                 "clsModule": "wrappers.pointless_reindexToMatch.script.pointless_reindexToMatch_gui",
                 "clsName": "pointless_reindexToMatch_gui",
-                "shortTitle": "Reindex or  change spacegroup",
+                "shortTitle": "Reindex reflections or change spacegroup",
                 "taskName": "pointless_reindexToMatch",
                 "taskVersion": 0.1
             }
@@ -6342,6 +6506,20 @@
                 "shortTitle": "SCULPTOR",
                 "taskName": "sculptor",
                 "taskVersion": 0.1
+            }
+        },
+        "servalcat_xtal_pipe": {
+            "0.0.0": {
+                "DESCRIPTION": null,
+                "MAINTAINER": "Nobody",
+                "RANK": 1,
+                "TASKTITLE": "Refinement - Servalcat (experimental)",
+                "class": "pipelines.servalcat_xtal_pipe.script.servalcat_xtal_pipe_guiCservalcat_xtal_pipe",
+                "clsModule": "pipelines.servalcat_xtal_pipe.script.servalcat_xtal_pipe_gui",
+                "clsName": "Cservalcat_xtal_pipe",
+                "shortTitle": "servalcat_xtal_pipe",
+                "taskName": "servalcat_xtal_pipe",
+                "taskVersion": 0.0
             }
         },
         "sheetbend": {
@@ -6481,6 +6659,20 @@
                 "clsName": "xia2_multiplex_gui",
                 "shortTitle": "multiplex",
                 "taskName": "xia2_multiplex",
+                "taskVersion": 0.1
+            }
+        },
+        "xia2_ssx_reduce": {
+            "0.0.0": {
+                "DESCRIPTION": "Select integrated data from xia2.ssx or dials.stills_process",
+                "MAINTAINER": "Nobody",
+                "RANK": 1,
+                "TASKTITLE": "Reduction of serial datasets using xia2.ssx_reduce",
+                "class": "wrappers.xia2_ssx_reduce.script.xia2_ssx_reduce_guixia2_ssx_reduce_gui",
+                "clsModule": "wrappers.xia2_ssx_reduce.script.xia2_ssx_reduce_gui",
+                "clsName": "xia2_ssx_reduce_gui",
+                "shortTitle": "xia2.ssx_reduce",
+                "taskName": "xia2_ssx_reduce",
                 "taskVersion": 0.1
             }
         },

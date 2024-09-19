@@ -1,62 +1,71 @@
-#from lxml import etree
+import sys,os
 from xml.etree import ElementTree as ET
 
 from core.CCP4PluginScript import CPluginScript
+from core import CCP4File
+
+import ctypes
+import chapi
+import gemmi
 
 class coot_fit_residues(CPluginScript):
-    
+
     TASKTITLE = 'Coot fit residues'     # A short title for gui menu
     TASKNAME = 'coot_fit_residues'                                  # Task name - should be same as class name
-    TASKCOMMAND = 'coot'                                     # The command to run the executable
     TASKVERSION= 0.0                                     # Version of this plugin
     WHATNEXT = ['prosmart_refmac']
     ASYNCHRONOUS = True
     TIMEOUT_PERIOD = 9999999.9
-    
-    '''
-        def __init__(self,parent=None,name=None,workDirectory=''):
-        CPluginScript. __init__(self,parent=parent,name=name)
-        '''
 
-    def processInputFiles(self):
-        #Create root for Output XML
-        self.xmlroot = ET.Element('Coot_fit_residues')
-        self.tableelement = ET.SubElement(self.xmlroot, 'Table', title='Per residue statistics')
-        self.xmlLength = 0
-        # watch the log file
-        logFilename = self.makeFileName('LOG')
-        from core import CCP4Utils
-        CCP4Utils.saveFile(logFilename,'')
-        self.watchFile(logFilename,self.handleLogChanged)
-    
-    def makeCommandAndScript(self):
-        import os
-        cootScriptPath = os.path.join(self.workDirectory,'script.py')
-        self.appendCommandLine(['--no-state-script','--no-graphics','--python','--pdb',self.container.inputData.XYZIN.fullPath,'--script',cootScriptPath])
-        
-        cootScript = open(cootScriptPath,"w")
-        cootScript.write("make_and_draw_map(r'" + str(self.container.inputData.FPHIIN.fullPath)+"', 'F', 'PHI', 'PHI', 0, 0)\n")
-        refineCommand = "fit_protein(0)\n"
-        cootScript.write(refineCommand)
-        cootScript.write("write_pdb_file(0,r'"+str(self.container.outputData.XYZOUT.fullPath)+"')\n")
-        cootScript.write("coot_real_exit(0)\n")
-        cootScript.close()
-        
+    def process(self, command=None, handler=None, **kw):
+        out_path = os.path.normpath(str(self.container.outputData.XYZOUT))
+        if sys.platform.startswith("win"):
+            out_path = out_path.replace("\\","\\\\")
+        mc = chapi.molecules_container_py(True)
+        mc.set_use_gemmi(True)
+        imol = mc.read_pdb(str(self.container.inputData.XYZIN.fullPath))
+        gemmiStructure = gemmi.read_structure(str(self.container.inputData.XYZIN.fullPath))
+        imap = mc.read_mtz(str(self.container.inputData.FPHIIN.fullPath),"F","PHI","",False,False)
+        mc.set_imol_refinement_map(imap)
+        mc.fill_partial_residues(imol)
+
+        chains = mc.get_chains_in_model(imol)
+        for model in gemmiStructure:
+            for chain in model:
+                firstResidue, lastResidue = chain[0].seqid.num,chain[-1].seqid.num
+                mc.refine_residue_range(imol,chain.name,firstResidue, lastResidue,4000)
+
+        mc.write_coordinates(imol,out_path)
+
+        libc = ctypes.CDLL(None)
+        if sys.platform == "darwin":
+            c_stdout = ctypes.c_void_p.in_dll(libc, '__stdoutp')
+            libc.fflush(c_stdout)
+        elif sys.platform.startwith("linux"):
+            c_stdout = ctypes.c_void_p.in_dll(libc, 'stdout')
+            libc.fflush(c_stdout)
+
+        # Create a trivial xml output file
+        root = ET.Element("coot_fit_residues")
+        self.container.outputData.XYZOUT.subType = 1
+        xml_file = CCP4File.CXmlDataFile(fullPath=self.makeFileName("PROGRAMXML"))
+        xml_file.saveFile(root)
+
+        self.reportStatus(CPluginScript.SUCCEEDED)
         return CPluginScript.SUCCEEDED
-    
-    
+
     def handleLogChanged(self, logFilename, inHandleFinish=None):
         if inHandleFinish is None:
             inHandleFinish=False
         # Create a trivial xml output file
-        
+
         self.tableelement.clear()
         tableelement=self.tableelement
-        
+
         pairs = [('Col_0','N'),('Col_1','StartBonds'),('Col_2','FinalBonds')]
         for pair in pairs:
             headerElement = ET.SubElement(tableelement,'Header',label=pair[1],identifier=pair[0])
-        
+
         cootlines = open(self.makeFileName('LOG')).readlines()
         iRow = 1
         currentChangeList = []
@@ -76,30 +85,30 @@ class coot_fit_residues(CPluginScript):
                     finalBondsElement.text = str(currentChangeList[1])
                     currentChangeList = []
                     iRow += 1
-        
+
         graphElement = ET.SubElement(tableelement,"Graph", title = "By residue bonds")
         graphColumnElement = ET.SubElement(graphElement,"Column", label='N', positionInList=str(0))
         graphColumnElement = ET.SubElement(graphElement,"Column", label='StartBonds', positionInList=str(1))
         graphColumnElement = ET.SubElement(graphElement,"Column", label='FinalBonds', positionInList=str(2))
-        
+
         if iRow%20 == 0 or inHandleFinish:
             from core import CCP4File
             f = CCP4File.CXmlDataFile(fullPath=self.makeFileName('PROGRAMXML'))
             newXml = ET.tostring(self.xmlroot)
-            
+
             if len(newXml) > self.xmlLength:
                 # Save the xml if it has grown
                 f.saveFile(self.xmlroot)
                 self.xmlLength = len(newXml)
-    
+
     def processOutputFiles(self):
         from core.CCP4PluginScript import CPluginScript
         import os
         status = CPluginScript.FAILED
         if os.path.exists(self.container.outputData.XYZOUT.__str__()): status = CPluginScript.SUCCEEDED
-        
+
         self.container.outputData.XYZOUT.subType = 1
-        
+
         # Create a trivial xml output file
         self.handleLogChanged(self.makeFileName('LOG'), inHandleFinish=True)
         self.reportStatus(finishStatus=status)
@@ -111,18 +120,18 @@ class coot_fit_residues(CPluginScript):
 import unittest
 
 class test_coot_fit_residues(unittest.TestCase):
-    
+
     def setUp(self):
         # make all background jobs wait for completion
         # this is essential for unittest to work
         from core.CCP4Modules import QTAPPLICATION,PROCESSMANAGER
         self.app = QTAPPLICATION()
         PROCESSMANAGER().setWaitForFinished(10000)
-    
+
     def tearDown(self):
         from core.CCP4Modules import PROCESSMANAGER
         PROCESSMANAGER().setWaitForFinished(-1)
-    
+
     def test_1(self):
         from core.CCP4Modules import QTAPPLICATION
         wrapper = coot_fit_residues(parent=QTAPPLICATION(),name='coot_fit_residues_test1')
