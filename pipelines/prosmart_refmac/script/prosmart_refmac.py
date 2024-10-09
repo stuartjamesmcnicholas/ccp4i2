@@ -343,48 +343,9 @@ class prosmart_refmac(CPluginScript):
 
     def makeCootPlugin(self):
          # FIXME - This is all nonsense - needs to consider best task, etc... *NOT* just firstRefmaca?
-        cootPlugin = self.makePluginObject('coot_script_lines')
-        xyzinList = cootPlugin.container.inputData.XYZIN
-        xyzinList.append(xyzinList.makeItem())
-        xyzinList[-1].set(self.currentCoordinates)
-        fphiinList = cootPlugin.container.inputData.FPHIIN
-        fphiinList.append(fphiinList.makeItem())
-        fphiinList[-1].set(self.firstRefmac.container.outputData.FPHIOUT)
-        #coot_stepped_refine,coot_fit_residues,coot_script_lines
-        if self.container.controlParameters.ADD_WATERS:
-            cootPlugin.container.controlParameters.SCRIPT = '''coot.set_ligand_water_to_protein_distance_limits(2.2, 3.3)
-coot.execute_find_waters_real(MapHandle_1,MolHandle_1,0,1.3)
-coot.write_pdb_file(MolHandle_1,os.path.join(dropDir,"output.pdb"))
-'''
-        """
-        rso = self.container.controlParameters.REFPRO_COOT_REALSPACE_OPERATION.__str__()
-        if rso == "coot_script_lines":
-            cootPlugin.container.controlParameters.SCRIPT = self.container.controlParameters.SCRIPT
-        elif rso == "coot_fit_residues":
-            cootPlugin.container.controlParameters.SCRIPT = '''fill_partial_residues(MolHandle_1)
-fit_protein(MolHandle_1)
-write_pdb_file(MolHandle_1,os.path.join(dropDir,"output.pdb"))
-'''
-        elif rso == "coot_stepped_refine":
-            if self.container.controlParameters.USERAMA.isSet() and self.container.controlParameters.USERAMA:
-                cootPlugin.container.controlParameters.SCRIPT = '''fill_partial_residues(MolHandle_1)
-stepped_refine_protein_for_rama(MolHandle_1)
-write_pdb_file(MolHandle_1,os.path.join(dropDir,"output.pdb"))
-'''
-            else:
-                cootPlugin.container.controlParameters.SCRIPT = '''fill_partial_residues(MolHandle_1)
-stepped_refine_protein(MolHandle_1)
-write_pdb_file(MolHandle_1,os.path.join(dropDir,"output.pdb"))
-'''
-        elif rso == "coot_add_waters":
-            cootPlugin.container.controlParameters.SCRIPT = '''set_ligand_water_to_protein_distance_limits(2.2, 3.3)
-execute_find_waters_real(MapHandle_1,MolHandle_1,0,1.3)
-write_pdb_file(MolHandle_1,os.path.join(dropDir,"output.pdb"))
-'''
-        elif rso == "none":
-            cootPlugin.container.controlParameters.SCRIPT = '''write_pdb_file(MolHandle_1,os.path.join(dropDir,"output.pdb"))
-'''
-        """
+        cootPlugin = self.makePluginObject('coot_find_waters')
+        cootPlugin.container.inputData.XYZIN.set(self.currentCoordinates)
+        cootPlugin.container.inputData.FPHIIN.set(self.firstRefmac.container.outputData.FPHIOUT)
         return cootPlugin
 
     def mapVerdictSuggestionsToi2Params(self,suggestedParameters):
